@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrix Effect - ARSALAN</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: black;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrixCanvas"></canvas>
+
+    <script>
+        // تعريف اسمك الذي سيظهر في التأثير
+        const nameToDisplay = "ARSALAN";
+        const nameArray = nameToDisplay.split('');
+
+        // إعداد الكانفاس
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        // إعداد خصائص الخط والألوان
+        const fontSize = 16;
+        const columns = Math.floor(width / fontSize);
+
+        // مصفوفة لتتبع مواضع قطرات الماتريكس
+        const drops = [];
+        for (let i = 0; i < columns; i++) {
+            drops[i] = 1;
+        }
+
+        // دالة الرسم الرئيسية
+        function draw() {
+            // خلفية شفافة لإنشاء تأثير التلاشي
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, width, height);
+
+            ctx.fillStyle = '#0F0'; // لون أخضر
+            ctx.font = `${fontSize}px arial`;
+
+            for (let i = 0; i < drops.length; i++) {
+                // تحديد الحرف الذي سيتم رسمه
+                let text;
+                if (i < nameArray.length) {
+                    // رسم حروف اسمك في البداية
+                    text = nameArray[i];
+                } else {
+                    // رسم أحرف وأرقام عشوائية
+                    text = String.fromCharCode(48 + Math.random() * 75);
+                }
+
+                // رسم النص على الشاشة
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                // إذا وصلت القطرة إلى أسفل الشاشة، أعدها إلى الأعلى
+                if (drops[i] * fontSize > height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+
+                // زيادة موضع القطرة
+                drops[i]++;
+            }
+        }
+
+        // عند تغيير حجم النافذة، قم بتحديث أبعاد الكانفاس
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            const newColumns = Math.floor(width / fontSize);
+            drops.length = newColumns;
+            for (let i = 0; i < newColumns; i++) {
+                if (!drops[i]) drops[i] = 1;
+            }
+        });
+
+        // بدء الرسوم المتحركة
+        setInterval(draw, 33);
+    </script>
+</body>
+</html>
